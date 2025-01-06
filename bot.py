@@ -11,10 +11,10 @@ from telegram.ext import (
 
 # Загрузка переменных окружения
 TELEGRAM_TOKEN = "6743094389:AAGhSkJ0Tt8nQxrBT_SPzQx6zhdNNy49oYI"
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = "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"
 
 # Настройка OpenAI
-openai.api_key = "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"
+openai.api_key = "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"
 
 # Функция приветствия
 async def start(update: Update, context: CallbackContext) -> None:
