@@ -46,10 +46,6 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
     
     await update.message.reply_text(bot_reply)
 
-    except Exception as e:
-        await update.message.reply_text(f"Ошибка: {e}")
-
-
 # Основной цикл бота
 def main():
     # Создаём приложение
