@@ -18,7 +18,7 @@ openai.api_key = OPENAI_API_KEY
 
 # Функция приветствия
 async def start(update: Update, context: CallbackContext) -> None:
-    await update.message.reply_text("Привет! Я ИИ-бот. Напиши мне любой вопрос.")
+    await update.message.reply_text("Привет! Я ИИ-бот ThermoPlus. Напиши мне любой вопрос.")
 
 # Обработка сообщений
 async def handle_message(update: Update, context: CallbackContext) -> None:
