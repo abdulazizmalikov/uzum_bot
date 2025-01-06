@@ -14,28 +14,28 @@ TELEGRAM_TOKEN = "6743094389:AAGhSkJ0Tt8nQxrBT_SPzQx6zhdNNy49oYI"
 OPENAI_API_KEY = "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"
 
 # Настройка OpenAI
-openai.api_key = OPENAI_API_KEY
+openai.api_key = "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"
 
 # Функция приветствия
 async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text("Привет! Я ИИ-бот ThermoPlus. Напиши мне любой вопрос.")
 
 # Обработка сообщений
-async def handle_message(update: Update, context: CallbackContext) -> None:
+async def handle_message(update, context):
     user_message = update.message.text
+
     try:
-        # Новый способ вызова API OpenAI
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-4",  # Или "gpt-3.5-turbo", если используете эту модель
             messages=[
-                {"role": "system", "content": "Ты умный помощник."},
+                {"role": "system", "content": "Ты умный помощник, готовый помочь."},
                 {"role": "user", "content": user_message}
             ]
         )
         bot_reply = response['choices'][0]['message']['content']
         await update.message.reply_text(bot_reply)
     except Exception as e:
-        await update.message.reply_text(f"Извините, произошла ошибка: {str(e)}")
+        await update.message.reply_text(f"Ошибка: {e}")
 
 
 # Основной цикл бота
