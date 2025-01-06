@@ -1,7 +1,8 @@
+from telegram.ext import filters  # Новый импорт для фильтров
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext
+from telegram import Update
 import os
 import openai
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 # Загрузка переменных окружения
 TELEGRAM_TOKEN = os.getenv("6743094389:AAFIGOFnDcYYFWPZNEV1I5gzEi_2G9HBjrs")
@@ -33,7 +34,7 @@ def main():
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+    dispatcher.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     updater.start_polling()
     updater.idle()
