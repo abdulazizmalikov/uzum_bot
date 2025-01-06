@@ -24,14 +24,19 @@ async def start(update: Update, context: CallbackContext) -> None:
 async def handle_message(update: Update, context: CallbackContext) -> None:
     user_message = update.message.text
     try:
+        # Новый способ вызова API OpenAI
         response = openai.ChatCompletion.create(
             model="gpt-4",
-            messages=[{"role": "user", "content": user_message}]
+            messages=[
+                {"role": "system", "content": "Ты умный помощник."},
+                {"role": "user", "content": user_message}
+            ]
         )
-        bot_reply = response["choices"][0]["message"]["content"]
+        bot_reply = response['choices'][0]['message']['content']
         await update.message.reply_text(bot_reply)
     except Exception as e:
-        await update.message.reply_text("Извините, произошла ошибка: " + str(e))
+        await update.message.reply_text(f"Извините, произошла ошибка: {str(e)}")
+
 
 # Основной цикл бота
 def main():
