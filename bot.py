@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 
 # Загрузка переменных окружения
-TELEGRAM_TOKEN = "123456789:ABCDEF1234567890abcdef1234567890abcDEF"
+TELEGRAM_TOKEN = "6743094389:AAGhSkJ0Tt8nQxrBT_SPzQx6zhdNNy49oYI"
 OPENAI_API_KEY = "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"
 
 # Настройка OpenAI
