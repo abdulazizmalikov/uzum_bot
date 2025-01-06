@@ -21,19 +21,31 @@ async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text("Привет! Я ИИ-бот ThermoPlus. Напиши мне любой вопрос.")
 
 # Обработка сообщений
-async def handle_message(update, context):
+faq = {
+    "Какие продукты вы производите?": "Компания Thermo Plus производит каменную вату для теплоизоляции.",
+    "Где находится ваш завод?": "Наш завод находится в городе Ургенч, Узбекистан.",
+    "Как заказать вашу продукцию?": "Вы можете оформить заказ через наш сайт или по телефону."
+}
+
+async def handle_message(update: Update, context: CallbackContext) -> None:
     user_message = update.message.text
 
-    try:
+    # Проверка на наличие ответа в FAQ
+    if user_message in faq:
+        bot_reply = faq[user_message]
+    else:
+        # Обработка с OpenAI, если ответа нет в FAQ
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # Или "gpt-3.5-turbo", если используете эту модель
+            model="gpt-4",
             messages=[
-                {"role": "system", "content": "Ты умный помощник, готовый помочь."},
+                {"role": "system", "content": "Ты — ассистент компании Thermo Plus. Ты должен отвечать только на вопросы, касающиеся нашей компании."},
                 {"role": "user", "content": user_message}
             ]
         )
         bot_reply = response['choices'][0]['message']['content']
-        await update.message.reply_text(bot_reply)
+    
+    await update.message.reply_text(bot_reply)
+
     except Exception as e:
         await update.message.reply_text(f"Ошибка: {e}")
 
