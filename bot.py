@@ -1,62 +1,57 @@
 import os
-import openai
-from telegram import Update
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    MessageHandler,
-    CallbackContext,
-    filters,
-)
+import time
+import requests
+from telegram import Bot
 
-# Загрузка переменных окружения
-TELEGRAM_TOKEN = "6743094389:AAGhSkJ0Tt8nQxrBT_SPzQx6zhdNNy49oYI"
-OPENAI_API_KEY = "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"
+# Получаем переменные из окружения
+TELEGRAM_TOKEN = os.environ.get("7666979213:AAESg9nVlPfCkx_lg0gyNUdgoNUFXSbsw0Y")
+UZUM_API_KEY = os.environ.get("vCRhQSWjWcuusOQzTTAGP9mnI6op6wTaZ1QU7NgWxac=")
+CHAT_ID = os.environ.get("998980322")
+UZUM_API_URL = "https://api-seller.uzum.uz/api/seller/v1/orders"
 
-# Настройка OpenAI
-openai.api_key = "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"
+bot = Bot(token=TELEGRAM_TOKEN)
 
-# Функция приветствия
-async def start(update: Update, context: CallbackContext) -> None:
-    await update.message.reply_text("Привет! Я ИИ-бот ThermoPlus. Напиши мне любой вопрос.")
+def get_new_orders():
+    headers = {
+        "Authorization": f"Bearer {UZUM_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    try:
+        response = requests.get(UZUM_API_URL, headers=headers)
+        if response.status_code == 200:
+            return response.json().get('orders', [])
+        else:
+            print("Ошибка получения заказов:", response.status_code)
+            return []
+    except Exception as e:
+        print("Ошибка запроса:", e)
+        return []
 
-# Обработка сообщений
-faq = {
-    "Какие продукты вы производите?": "Компания Thermo Plus производит каменную вату для теплоизоляции.",
-    "Где находится ваш завод?": "Наш завод находится в городе Ургенч, Узбекистан.",
-    "Как заказать вашу продукцию?": "Вы можете оформить заказ через наш сайт или по телефону."
-}
+def send_telegram_message(message):
+    bot.send_message(chat_id=CHAT_ID, text=message)
 
-async def handle_message(update: Update, context: CallbackContext) -> None:
-    user_message = update.message.text
-
-    # Проверка на наличие ответа в FAQ
-    if user_message in faq:
-        bot_reply = faq[user_message]
-    else:
-        # Обработка с OpenAI, если ответа нет в FAQ
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "Ты — ассистент компании Thermo Plus. Ты должен отвечать только на вопросы, касающиеся нашей компании."},
-                {"role": "user", "content": user_message}
-            ]
-        )
-        bot_reply = response['choices'][0]['message']['content']
-    
-    await update.message.reply_text(bot_reply)
-
-# Основной цикл бота
 def main():
-    # Создаём приложение
-    application = Application.builder().token(TELEGRAM_TOKEN).build()
-
-    # Регистрируем обработчики
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-
-    # Запуск бота
-    application.run_polling()
+    processed_orders = set()
+    while True:
+        orders = get_new_orders()
+        for order in orders:
+            order_id = order.get("id")
+            if order_id and order_id not in processed_orders:
+                customer = order.get("customer", {})
+                customer_name = customer.get("name", "Неизвестный клиент")
+                items = order.get("items", [])
+                items_text = "\n".join([
+                    f"- {item.get('productName', 'Товар')} (x{item.get('quantity', 1)})"
+                    for item in items
+                ])
+                message = (
+                    f"📦 Новый заказ #{order_id}\n"
+                    f"👤 Клиент: {customer_name}\n"
+                    f"🛒 Товары:\n{items_text}"
+                )
+                send_telegram_message(message)
+                processed_orders.add(order_id)
+        time.sleep(300)  # Проверять каждые 5 минут
 
 if __name__ == "__main__":
     main()
