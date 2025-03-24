@@ -1,14 +1,16 @@
-import os
 import time
 import requests
 from telegram import Bot
 
-# Получаем переменные из окружения
-TELEGRAM_TOKEN = os.environ.get("7666979213:AAESg9nVlPfCkx_lg0gyNUdgoNUFXSbsw0Y")
-UZUM_API_KEY = os.environ.get("vCRhQSWjWcuusOQzTTAGP9mnI6op6wTaZ1QU7NgWxac=")
-CHAT_ID = os.environ.get("998980322")
+# Токены и ID
+TELEGRAM_TOKEN = "7666979213:AAESg9nVlPfCkx_lg0gyNUdgoNUFXSbsw0Y"
+UZUM_API_KEY = "vCRhQSWjWcuusOQzTTAGP9mnI6op6wTaZ1QU7NgWxac="
+CHAT_ID = "998980322"
+
+# URL API Uzum
 UZUM_API_URL = "https://api-seller.uzum.uz/api/seller/v1/orders"
 
+# Инициализация бота
 bot = Bot(token=TELEGRAM_TOKEN)
 
 def get_new_orders():
@@ -51,7 +53,7 @@ def main():
                 )
                 send_telegram_message(message)
                 processed_orders.add(order_id)
-        time.sleep(300)  # Проверять каждые 5 минут
+        time.sleep(300)  # Проверка каждые 5 минут
 
 if __name__ == "__main__":
     main()
