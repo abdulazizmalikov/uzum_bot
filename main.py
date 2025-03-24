@@ -34,6 +34,10 @@ def send_telegram_message(message):
 
 def main():
     processed_orders = set()
+
+    # Приветственное сообщение
+    send_telegram_message("✅ Бот успешно запущен и ждёт заказы!")
+
     while True:
         orders = get_new_orders()
         for order in orders:
@@ -53,7 +57,7 @@ def main():
                 )
                 send_telegram_message(message)
                 processed_orders.add(order_id)
-        time.sleep(300)  # Проверка каждые 5 минут
+        time.sleep(300)
 
 if __name__ == "__main__":
     main()
